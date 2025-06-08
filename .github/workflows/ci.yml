@@ -8,27 +8,36 @@ on:
 jobs:
   train:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
-          python-version: 3.10
+          auto-update-conda: true
+          environment-file: conda.yaml
+          activate-environment: iris_env
           auto-activate-base: false
+          python-version: 3.10
 
-      - name: Create Conda Environment Manually
+      - name: Confirm environment setup
         shell: bash -l {0}
         run: |
-          conda env create -f conda.yaml
-          conda activate iris_env
+          conda info --envs
+          which python
+          python --version
+          pip show mlflow
+
+      - name: Install MLflow explicitly (safety)
+        shell: bash -l {0}
+        run: |
           pip install mlflow
 
       - name: Run MLflow Project
         shell: bash -l {0}
         run: |
-          conda activate iris_env
           mlflow run .
 
       - name: Upload Artifacts
