@@ -8,20 +8,22 @@ on:
 jobs:
   train:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Miniconda
+      - name: Set up Mambaforge (Miniconda alternative)
         uses: conda-incubator/setup-miniconda@v2
         with:
-          python-version: 3.10
           auto-activate-base: false
+          miniforge-variant: Mambaforge
+          miniforge-version: latest
 
-      - name: Create Conda Env from file
+      - name: Create Conda Environment with mamba
         shell: bash -l {0}
         run: |
-          conda env create -f conda.yaml
+          mamba env create -f conda.yaml
           conda activate iris_env
 
       - name: Run MLflow Project
