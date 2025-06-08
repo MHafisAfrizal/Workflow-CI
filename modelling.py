@@ -5,7 +5,7 @@ import mlflow.sklearn
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 
-# Tracking
+# Tracking info
 print("Tracking URI:", mlflow.get_tracking_uri())
 print(os.getcwd())
 print(os.listdir())
@@ -24,17 +24,18 @@ y_test = pd.read_csv(os.path.join(data_dir, 'y_test.csv')).values.ravel()
 mlflow.set_experiment("Iris_Classification")
 mlflow.sklearn.autolog()
 
-# Jalankan dan log run
-with mlflow.start_run():
-    model = LogisticRegression(random_state=42)
-    model.fit(X_train, y_train)
+# Tanpa start_run(), karena pakai `mlflow run .`
+model = LogisticRegression(random_state=42)
+model.fit(X_train, y_train)
 
-    y_pred = model.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
-    mlflow.log_metric("accuracy", accuracy)
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+mlflow.log_metric("accuracy", accuracy)
 
-    print("Akurasi:", accuracy)
-    print("Laporan Klasifikasi:\n", classification_report(y_test, y_pred))
+print("Akurasi:", accuracy)
+print("Laporan Klasifikasi:\n", classification_report(y_test, y_pred))
 
+# Run info (opsional)
+if mlflow.active_run():
     print("Run ID:", mlflow.active_run().info.run_id)
     print("Run saved in:", mlflow.get_artifact_uri())
